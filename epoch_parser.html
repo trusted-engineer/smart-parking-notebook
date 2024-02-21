@@ -1,0 +1,51 @@
+<!doctype html>
+<html>
+<head>
+<title>Epoch parser</title>
+</head>
+
+<body>
+<h1>Epoch parser</h1>
+<p>Becasue the engineers developing TFlite did not think of including an option to do just this in a programmatic way. Thank you!</p>
+<textarea id="input"></textarea>
+<br>
+<input type="button" value="Run!" onclick="run()">
+<br>
+<p id="output">[Here goes the output]</p>
+<script>
+var input = document.getElementById("input");
+var output = document.getElementById("output");
+
+function run(){
+    var txt = input.value;
+    txt = txt.split("Epoch");
+    txt.shift();
+    data = [];
+    //output.innerHTML = txt.length + txt;
+    // Regular expression to match the values of "loss" and "val_loss"
+    const lossRegex = /loss: (\d+\.\d+)/;
+    const valLossRegex = /val_loss: (\d+\.\d+)/;
+
+    for(t of txt){
+        // Extracting the values using the regular expressions
+        const lossMatch = t.match(lossRegex);
+        const valLossMatch = t.match(valLossRegex);
+        
+        // Checking if matches were found
+        if (lossMatch && valLossMatch) {
+          const lossValue = parseFloat(lossMatch[1]);
+          const valLossValue = parseFloat(valLossMatch[1]);
+        
+          // Output the results
+          console.log("Loss:", lossValue);
+          console.log("Validation Loss:", valLossValue);
+          data.push({'loss': lossValue, 'val_loss': valLossValue});
+        } else {
+          console.log("Could not find loss values in the input string.");
+        }
+    }
+    output.innerHTML = JSON.stringify(data);
+}
+</script>
+</body>
+</html>
